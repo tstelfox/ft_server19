@@ -6,7 +6,7 @@
 #    By: tmullan <tmullan@student.codam.nl>           +#+                      #
 #                                                    +#+                       #
 #    Created: 2020/03/05 14:16:52 by tmullan       #+#    #+#                  #
-#    Updated: 2020/04/28 11:27:25 by tmullan       ########   odam.nl          #
+#    Updated: 2020/05/30 12:11:09 by tmullan       ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ RUN apt-get install sendmail -y
 COPY ./srcs/nginx.conf /etc/nginx/sites-available/localhost
 COPY ./srcs/sqlsetup.sql /var/
 
-#Generate SSl certificate here
+# Generating SSL key & certificate
 RUN openssl genrsa -out /etc/ssl/certs/localhost.key 2048 && \
 	openssl req -x509 -days 356 -nodes -new -key /etc/ssl/certs/localhost.key \
 	-subj '/C=NL/ST=NH/L=Amsterdam/O=Codam/CN=localhost' -out /etc/ssl/certs/localhost.crt
@@ -73,6 +73,14 @@ RUN chmod 755 -R /var/www
 CMD service php7.3-fpm start && \
 	service nginx start && \
 	service mysql start && \
+	service sendmail start && \
 	bash
 	# tail -f /dev/null
 EXPOSE 80 443
+
+# docker build -t ‘docker’ .  //building image
+# docker run -p 80:80 -p 443:443 -it 'name of image’ //starts container and opens terminal within it.
+
+# To toggle autoindex:
+# cd etc/nginx/sites-available && sed -i 's/autoindex on/autoindex off/g' localhost
+# service nginx restart
